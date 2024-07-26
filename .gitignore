@@ -7,3 +7,4 @@ Gemfile.lock
 packstack.egg-info
 releasenotes/build
 .stestr
+.diffchanges
