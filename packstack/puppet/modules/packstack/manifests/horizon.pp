@@ -19,13 +19,11 @@ class packstack::horizon ()
     class { 'horizon':
       secret_key            => lookup('CONFIG_HORIZON_SECRET_KEY'),
       keystone_url          => lookup('CONFIG_KEYSTONE_PUBLIC_URL'),
-      keystone_default_role => '_member_',
-      server_aliases        => [lookup('CONFIG_CONTROLLER_HOST'), $::fqdn, 'localhost'],
+      server_aliases        => [lookup('CONFIG_CONTROLLER_HOST'), $facts['networking']['fqdn'], 'localhost'],
       allowed_hosts         => '*',
-      hypervisor_options    => {'can_set_mount_point' => false, },
       django_debug          => $is_django_debug,
       django_session_engine => 'django.contrib.sessions.backends.cache',
-      cache_backend         => 'django.core.cache.backends.memcached.MemcachedCache',
+      cache_backend         => 'django.core.cache.backends.memcached.PyMemcacheCache',
       cache_server_ip       => '127.0.0.1',
       cache_server_port     => '11211',
       file_upload_temp_dir  => '/var/tmp',
@@ -35,8 +33,7 @@ class packstack::horizon ()
       ssl_ca                => lookup('CONFIG_HORIZON_SSL_CACERT', undef, undef, undef),
       ssl_verify_client     => 'optional',
       neutron_options       => {
-        'enable_vpn'      => lookup('CONFIG_HORIZON_NEUTRON_VPN'),
-        'enable_lb'       => lookup('CONFIG_HORIZON_NEUTRON_LB'),
+        'enable_vpn' => lookup('CONFIG_HORIZON_NEUTRON_VPN'),
       },
     }
 
@@ -66,7 +63,7 @@ class packstack::horizon ()
       jump   => 'accept',
     }
 
-    if str2bool($::selinux) {
+    if str2bool($facts['os']['selinux']['enabled']) {
       selboolean{ 'httpd_can_network_connect':
         value      => on,
         persistent => true,
