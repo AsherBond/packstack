@@ -41,8 +41,15 @@ class packstack::cinder ()
     class { 'cinder::glance': }
 
     class { 'cinder::nova':
-      password => lookup('CONFIG_NOVA_KS_PW'),
-      auth_url => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
+      auth_type => 'password',
+      password  => lookup('CONFIG_NOVA_KS_PW'),
+      auth_url  => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
+    }
+
+    class { 'cinder::keystone::service_user':
+      send_service_user_token => true,
+      password                => lookup('CONFIG_CINDER_KS_PW'),
+      auth_url                => lookup('CONFIG_KEYSTONE_ADMIN_URL'),
     }
 
     class { 'cinder::backends':
