@@ -142,7 +142,6 @@ def create_manifest(config, messages):
 
     proto = "http"
     config["CONFIG_HORIZON_PORT"] = 80
-    sslmanifestdata = ''
     if config["CONFIG_HORIZON_SSL"] == 'y':
         config["CONFIG_HORIZON_PORT"] = 443
         proto = "https"
@@ -165,9 +164,9 @@ def create_manifest(config, messages):
                 raise exceptions.ParamValidationError(
                     "The file %s doesn't exist" % ssl_chain_file)
 
+            final_cacert = open(ssl_chain_file, 'rt').read()
             final_cert = open(ssl_cert_file, 'rt').read()
             final_key = open(ssl_key_file, 'rt').read()
-            final_cacert = open(ssl_chain_file, 'rt').read()
             host = config['CONFIG_CONTROLLER_HOST']
             deliver_ssl_file(final_cacert, ssl_chain_file, host)
             deliver_ssl_file(final_cert, ssl_cert_file, host)

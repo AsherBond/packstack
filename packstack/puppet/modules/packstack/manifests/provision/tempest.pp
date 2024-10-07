@@ -15,7 +15,6 @@ class packstack::provision::tempest ()
 
     # Authentication/Keystone
     $identity_uri_v3       = lookup('CONFIG_KEYSTONE_PUBLIC_URL')
-    $auth_version          = lookup('CONFIG_KEYSTONE_API_VERSION')
     $admin_username        = lookup('CONFIG_KEYSTONE_ADMIN_USERNAME')
     $admin_password        = lookup('CONFIG_KEYSTONE_ADMIN_PW')
     $admin_project_name    = 'admin'
@@ -100,11 +99,6 @@ class packstack::provision::tempest ()
       $neutron_api_extensions = undef
     }
 
-    # NOTE(tkajinam): The latest openssl in c9s repo doesn't accept SHA1 by
-    #                 default, which is causing ssh with rsa keys to fail.
-    #                 See bug 1962507 for details.
-    $ssh_key_type = 'ecdsa'
-
     class { 'tempest':
       admin_domain_name         => $admin_domain_name,
       admin_password            => $admin_password,
@@ -112,7 +106,6 @@ class packstack::provision::tempest ()
       admin_username            => $admin_username,
       use_dynamic_credentials   => $use_dynamic_credentials,
       aodh_available            => $aodh_available,
-      auth_version              => $auth_version,
       ceilometer_available      => $ceilometer_available,
       cinder_available          => $cinder_available,
       configure_images          => $configure_images,
@@ -136,7 +129,6 @@ class packstack::provision::tempest ()
       public_network_name       => $public_network_name,
       public_router_id          => $public_router_id,
       resize_available          => $resize_available,
-      ssh_key_type              => $ssh_key_type,
       swift_available           => $swift_available,
       tempest_workspace         => $tempest_workspace,
       install_from_source       => false,
