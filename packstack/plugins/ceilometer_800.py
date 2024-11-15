@@ -1,4 +1,3 @@
-# -*- coding: utf-8 -*-
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
 # You may obtain a copy of the License at
@@ -58,18 +57,6 @@ def initConfig(controller):
              "LOOSE_VALIDATION": False,
              "USE_DEFAULT": False,
              "NEED_CONFIRM": True,
-             "CONDITION": False},
-
-            {"CMD_OPTION": "ceilometer-service-name",
-             "PROMPT": "Enter the Ceilometer service name.",
-             "OPTION_LIST": ['ceilometer', 'httpd'],
-             "VALIDATORS": [validators.validate_options],
-             "DEFAULT_VALUE": "httpd",
-             "MASK_INPUT": False,
-             "LOOSE_VALIDATION": False,
-             "CONF_NAME": 'CONFIG_CEILOMETER_SERVICE_NAME',
-             "USE_DEFAULT": False,
-             "NEED_CONFIRM": False,
              "CONDITION": False},
 
             {"CONF_NAME": "CONFIG_CEILOMETER_COORDINATION_BACKEND",

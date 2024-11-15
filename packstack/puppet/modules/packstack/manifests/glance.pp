@@ -2,10 +2,6 @@ class packstack::glance ()
 {
     create_resources(packstack::firewall, lookup('FIREWALL_GLANCE_RULES', undef, undef, {}))
 
-    $glance_ks_pw = lookup('CONFIG_GLANCE_DB_PW')
-    $glance_mariadb_host = lookup('CONFIG_MARIADB_HOST_URL')
-    $glance_cfg_ctrl_host = lookup('CONFIG_KEYSTONE_HOST_URL')
-
     # glance option bind_host requires address without brackets
     $bind_host = lookup('CONFIG_IP_VERSION') ? {
       'ipv6'  => '::0',
@@ -29,15 +25,23 @@ class packstack::glance ()
     }
 
     class { 'glance::api::db':
-      database_connection => "mysql+pymysql://glance:${glance_ks_pw}@${glance_mariadb_host}/glance",
+      database_connection => os_database_connection({
+        'dialect'  => 'mysql+pymysql',
+        'host'     => lookup('CONFIG_MARIADB_HOST_URL'),
+        'username' => 'glance',
+        'password' => lookup('CONFIG_GLANCE_DB_PW'),
+        'database' => 'glance',
+      })
     }
 
     class { 'glance::api':
-      bind_host           => $bind_host,
-      pipeline            => 'keystone',
-      workers             => lookup('CONFIG_SERVICE_WORKERS'),
-      enabled_backends    => ["${default_store}:${default_store}", "http:http"],
-      default_backend     => $default_store,
+      service_name     => 'httpd',
+      enabled_backends => ["${default_store}:${default_store}", "http:http"],
+      default_backend  => $default_store,
+    }
+    class { 'glance::wsgi::apache':
+      bind_host => $bind_host,
+      workers   => lookup('CONFIG_SERVICE_WORKERS'),
     }
 
     glance::backend::multistore::http { 'http': }
