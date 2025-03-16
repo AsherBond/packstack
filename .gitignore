@@ -5,6 +5,7 @@
 vendor/*
 Gemfile.lock
 packstack.egg-info
+docs/build
 releasenotes/build
 .stestr
 .diffchanges
